@@ -1,4 +1,4 @@
-NVCC=nvcc -ccbin=$(CXX) -D_FORCE_INLINES
+NVCC=/usr/local/cuda-11/bin/nvcc -ccbin=$(CXX) -D_FORCE_INLINES
 
 NVCC_VER_REQ=10.1
 NVCC_VER=$(shell $(NVCC) --version | grep release | cut -f2 -d, | cut -f3 -d' ')
@@ -12,7 +12,7 @@ NVBIT_PATH=../../core
 INCLUDES=-I$(NVBIT_PATH)
 
 LIBS=-L$(NVBIT_PATH) -lnvbit
-NVCC_PATH=-L $(subst bin/nvcc,lib64,$(shell which nvcc | tr -s /))
+NVCC_PATH=-L/usr/local/cuda-11/lib64
 
 SOURCES=$(wildcard *.cu)
 
@@ -27,6 +27,7 @@ NVBIT_TOOL=$(current_dir).so
 all: $(NVBIT_TOOL)
 
 $(NVBIT_TOOL): $(OBJECTS) $(NVBIT_PATH)/libnvbit.a
+	echo $(NVCC_PATH)
 	$(NVCC) -arch=sm_$(ARCH) -O3 $(OBJECTS) $(LIBS) $(NVCC_PATH) -lcuda -lcudart_static -shared -o $@
 
 %.o: %.cu
